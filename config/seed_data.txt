@@ -37,10 +37,19 @@
 
 Models:
 earthquake { above }
-Coordinates {longitude, latitude, depth }
+Coordinate { longitude, latitude, depth }
 DataNetwork { code }
 ProductType { name }
 Sources { code }
+
+Associations:
+Earthquakes: has_many :sources, :product_types, has_one :cooridnate
+Sources: has_many :earthquakes, through: :earthquake_reports
+ProductTypes: has_many :earthquakes, through: report_products
+Joins:
+
+EarthquakeReports
+ReportProduct: belongs_to :earthquake belongs_to :product_type
 
 Create extra models and add associations to handle:
 ids
