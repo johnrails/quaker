@@ -1,0 +1,50 @@
+{
+  "type":"Feature",
+  "properties":{
+      "mag":7,
+      "place":"46km S of Acari, Peru",
+      "time":1380127363820,
+      "updated":1380139630266,
+      "tz":-300,
+      "url":"http://earthquake.usgs.gov/earthquakes/eventpage/usb000jzma",
+      "detail":"http://earthquake.usgs.gov/earthquakes/feed/v1.0/detail/usb000jzma.geojson",
+      "felt":116,
+      "cdi":6.2,
+      "mmi":6.76,
+      "alert":"green",
+      "status":"reviewed",
+      "tsunami":1,
+      "sig":826,
+      "net":"us",
+      "code":"b000jzma",
+      "ids":",pt13268000,at00mtox39,usb000jzma,",
+      "sources":",pt,at,us,",
+      "types":",cap,dyfi,general-link,geoserve,impact-link,losspager,moment-tensor,nearby-cities,origin,p-wave-travel-times,phase-data,scitech-link,shakemap,tectonic-summary,",
+      "nst":null,
+      "dmin":4.432,
+      "rms":0.96,
+      "gap":37,
+      "magType":"mwb",
+      "type":"earthquake",
+      "title":"M 7.0 - 46km S of Acari, Peru"
+      },
+  "geometry":{
+      "type":"Point",
+      "coordinates":[-74.5624,-15.8509,45.79]
+      },
+  "id":"usb000jzma"
+  }
+
+Models:
+earthquake { above }
+Coordinates {longitude, latitude, depth }
+DataNetwork { code }
+ProductType { name }
+Sources { code }
+
+Create extra models and add associations to handle:
+ids
+sources
+types
+coordinates
+networks
