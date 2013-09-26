@@ -7,7 +7,7 @@ class Coordinate < ActiveRecord::Base
   #=============
   # validations
   #=============
-  validates :logitude, numericality: { only_integer: false }
+  validates :longitude, numericality: { only_integer: false }
   validates :latitude, numericality: { only_integer: false }
   validates :depth, numericality: { only_integer: false }
 

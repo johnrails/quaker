@@ -61,7 +61,7 @@ class Earthquake < ActiveRecord::Base
 				)
 			quake.set_sources(properties['sources'])
 			quake.set_types(properties['types'])
-			quake.set_coordinate(properties['geometry']['coordinates'])
+			quake.set_coordinate(feature['geometry']['coordinates'])
 		end
 	end
 
