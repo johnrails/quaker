@@ -16,6 +16,10 @@ class Earthquake < ActiveRecord::Base
 	def self.most_dangerous(count,days,region)
 
 	end
+
+	def close_by(coordinates)
+		SELECT id, ( 3959 * acos( cos( radians(18.21) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(-68.88) ) + sin( radians(18.21) ) * sin( radians( latitude ) ) ) ) AS distance FROM coordinates HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;
+	end
 	def set_sources(sources)
 		return  if sources.split(',').empty?
 		quake_sources = sources.split(',')
