@@ -14,9 +14,9 @@
 ActiveRecord::Schema.define(version: 20130926055925) do
 
   create_table "coordinates", force: true do |t|
-    t.decimal  "latitude",      precision: 10, scale: 0
-    t.decimal  "longitude",     precision: 10, scale: 0
-    t.decimal  "depth",         precision: 10, scale: 0
+    t.decimal  "latitude",      precision: 10, scale: 2
+    t.decimal  "longitude",     precision: 10, scale: 2
+    t.decimal  "depth",         precision: 10, scale: 2
     t.integer  "earthquake_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -30,22 +30,22 @@ ActiveRecord::Schema.define(version: 20130926055925) do
   end
 
   create_table "earthquakes", force: true do |t|
-    t.decimal  "magnitude",  precision: 10, scale: 0
+    t.decimal  "magnitude",  precision: 10, scale: 2
     t.string   "place"
     t.datetime "time"
     t.string   "url"
     t.string   "detail_url"
     t.integer  "felt"
-    t.decimal  "cdi",        precision: 10, scale: 0
-    t.decimal  "mmi",        precision: 10, scale: 0
+    t.decimal  "cdi",        precision: 10, scale: 2
+    t.decimal  "mmi",        precision: 10, scale: 2
     t.string   "alert"
     t.string   "status"
     t.integer  "tsumani"
     t.integer  "sig"
     t.string   "code"
     t.integer  "nst"
-    t.decimal  "dmin",       precision: 10, scale: 0
-    t.decimal  "gap",        precision: 10, scale: 0
+    t.decimal  "dmin",       precision: 10, scale: 2
+    t.decimal  "gap",        precision: 10, scale: 2
     t.string   "mag_type"
     t.string   "quake_type"
     t.datetime "created_at"
