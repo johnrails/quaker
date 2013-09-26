@@ -38,7 +38,6 @@
 Models:
 earthquake { above }
 Coordinate { longitude, latitude, depth }
-DataNetwork { code }
 ProductType { name }
 Sources { code }
 
