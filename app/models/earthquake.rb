@@ -10,12 +10,28 @@ class Earthquake < ActiveRecord::Base
 	has_one :coordinate
 	has_many :product_types, :through  =>  :report_products
 
+	def set_sources(sources)
+		return  if sources.split(',').empty?
+		quake_sources = sources.split(',')
+			quake_sources.each  do |source|
+				self.sources << Source.find_or_create_by(code: source)
+			end
+		self.save!
+	end
 
+	def set_types(types)
+		return  if types.split(',').empty?
+		product_types = types.split(',')
+			product_types.each  do |name|
+				self.product_types << ProductType.find_or_create_by(name: name)
+			end
+		self.save!
+	end
 
-
-
-
-
+	def set_coordinate(coordinates)
+		raise ArgumentError, "invalid coordinates format. should be an array [longitude,latitude,depth]" unless coordinates.is_a?(Array) && coordinates.size == 3
+		self.create_coordinate(longitude: coordinates[0],latitude: coordinates[1],depth: coordinates.last)
+	end
 
 	protected
 	def self.seed_data
@@ -41,22 +57,13 @@ class Earthquake < ActiveRecord::Base
 				dmin: properties['dmin'],
 				gap: properties['gap'],
 				mag_type: properties['magType'],
-				type: properties['type']
+				quake_type: properties['type']
 				)
-			set_sources(quake,properties['sources'])
+			quake.set_sources(properties['sources'])
+			quake.set_types(properties['types'])
+			quake.set_coordinate(properties['geometry']['coordinates'])
 		end
 	end
-	def set_sources(sources)
-		return  if sources.split(',').empty?
-		quake_sources = sources.split(',')
-			quake_sources.each  do |source|
-				self.sources << Source.find_or_create_by_code(sources)
-			end
-		self.save!
-	end
 
-	def set_coordinate(coordinates)
-		raise ArgumentException, "invalid coordinates format. should be an array [longitude,latitude,depth]" unless coordinates.is_a(Array) && coordinates.size <= 3
-		self.coordinate.create(longitude: coordinates[0],latitude: coordinates[1],depth: coordinates.last)
-	end
+
 end

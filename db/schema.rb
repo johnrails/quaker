@@ -11,12 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130925231004) do
+ActiveRecord::Schema.define(version: 20130926055925) do
 
   create_table "coordinates", force: true do |t|
     t.decimal  "latitude",      precision: 10, scale: 0
     t.decimal  "longitude",     precision: 10, scale: 0
     t.decimal  "depth",         precision: 10, scale: 0
+    t.integer  "earthquake_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "earthquake_reports", force: true do |t|
+    t.integer  "source_id"
     t.integer  "earthquake_id"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -40,7 +47,20 @@ ActiveRecord::Schema.define(version: 20130925231004) do
     t.decimal  "dmin",       precision: 10, scale: 0
     t.decimal  "gap",        precision: 10, scale: 0
     t.string   "mag_type"
-    t.string   "type"
+    t.string   "quake_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "product_types", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "report_products", force: true do |t|
+    t.integer  "product_type_id"
+    t.integer  "earthquake_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
