@@ -9,7 +9,13 @@ class Earthquake < ActiveRecord::Base
 	has_many :report_products
 	has_one :coordinate
 	has_many :product_types, :through  =>  :report_products
+	#===============
+	# class methods
+	#==============
 
+	def self.most_dangerous(count,days,region)
+
+	end
 	def set_sources(sources)
 		return  if sources.split(',').empty?
 		quake_sources = sources.split(',')
