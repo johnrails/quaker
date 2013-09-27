@@ -40,7 +40,7 @@ class Earthquake < ActiveRecord::Base
 
 	def set_coordinate(coordinates)
 		raise ArgumentError, "invalid coordinates format. should be an array [longitude,latitude,depth]" unless coordinates.is_a?(Array) && coordinates.size == 3
-		self.create_coordinate(longitude: coordinates[0],latitude: coordinates[1],depth: coordinates.last)
+		self.create_location(longitude: coordinates[0],latitude: coordinates[1],depth: coordinates.last)
 	end
 
 	protected
@@ -51,7 +51,6 @@ class Earthquake < ActiveRecord::Base
 			properties = feature['properties']
 			quake = Earthquake.create(
 				magnitude: properties['mag'],
-				place: properties['place'],
 				time: Time.at((properties['time']/1000)),
 				url: properties['url'],
 				detail_url: properties['detail'],
@@ -71,7 +70,7 @@ class Earthquake < ActiveRecord::Base
 				)
 			quake.set_sources(properties['sources'])
 			quake.set_types(properties['types'])
-			quake.set_coordinate(feature['geometry']['coordinates'])
+			quake.set_location(properties['place'],feature['geometry']['coordinates'])
 		end
 	end
 
