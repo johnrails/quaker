@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130927041300) do
+ActiveRecord::Schema.define(version: 20130928175745) do
 
   create_table "earthquake_reports", force: true do |t|
     t.integer  "source_id"
@@ -41,6 +41,9 @@ ActiveRecord::Schema.define(version: 20130927041300) do
     t.string   "quake_type"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.decimal  "latitude",   precision: 4,  scale: 2
+    t.decimal  "longitude",  precision: 4,  scale: 2
+    t.decimal  "depth",      precision: 4,  scale: 2
   end
 
   create_table "locations", force: true do |t|
@@ -50,8 +53,18 @@ ActiveRecord::Schema.define(version: 20130927041300) do
     t.integer  "earthquake_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "place"
     t.integer  "offset"
+    t.boolean  "is_us"
+    t.integer  "place_id"
+  end
+
+  add_index "locations", ["earthquake_id"], name: "index_locations_on_earthquake_id", using: :btree
+  add_index "locations", ["place_id"], name: "index_locations_on_place_id", using: :btree
+
+  create_table "places", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "product_types", force: true do |t|
@@ -71,14 +84,6 @@ ActiveRecord::Schema.define(version: 20130927041300) do
     t.string   "code"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "us_states", primary_key: "state_code", force: true do |t|
-    t.string "state_abbrev",   limit: 2,  null: false
-    t.string "state_full",     limit: 30, null: false
-    t.string "state_long",     limit: 48, null: false
-    t.string "country_abbrev", limit: 2,  null: false
-    t.string "country_name",   limit: 30, null: false
   end
 
 end

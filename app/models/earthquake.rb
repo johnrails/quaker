@@ -17,9 +17,9 @@ class Earthquake < ActiveRecord::Base
 
 	end
 
-	def close_by(coordinates)
-		SELECT id, ( 3959 * acos( cos( radians(18.21) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(-68.88) ) + sin( radians(18.21) ) * sin( radians( latitude ) ) ) ) AS distance FROM coordinates HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;
-	end
+	# def close_by(coordinates)
+	# 	SELECT id, ( 3959 * acos( cos( radians(18.21) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(-68.88) ) + sin( radians(18.21) ) * sin( radians( latitude ) ) ) ) AS distance FROM coordinates HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;
+	# end
 	def set_sources(sources)
 		return  if sources.split(',').empty?
 		quake_sources = sources.split(',')
@@ -38,10 +38,17 @@ class Earthquake < ActiveRecord::Base
 		self.save!
 	end
 
-	def set_coordinate(coordinates)
+	def set_coordinate(place,coordinates)
 		raise ArgumentError, "invalid coordinates format. should be an array [longitude,latitude,depth]" unless coordinates.is_a?(Array) && coordinates.size == 3
-		self.create_location(longitude: coordinates[0],latitude: coordinates[1],depth: coordinates.last)
+		self.create_location(longitude: coordinates[0],latitude: coordinates[1],depth: coordinates.last, place: parse_place(place))
 	end
+
+	def parse_place(place_str)
+		#/of/.match(place).nil? ? place.split("of") : place.split(",")
+		#place = place_str.split('of').map { |s| s.split(',') }.flatten
+		place_str.split(',').last.strip
+	end
+
 
 	protected
 	def self.seed_data
@@ -66,11 +73,14 @@ class Earthquake < ActiveRecord::Base
 				dmin: properties['dmin'],
 				gap: properties['gap'],
 				mag_type: properties['magType'],
-				quake_type: properties['type']
+				quake_type: properties['type'],
+				latitude: feature['geometry']['coordinates'][1],
+				longitude: feature['geometry']['coordinates'][0],
+				depth: latitude: feature['geometry']['coordinates'][2]
 				)
 			quake.set_sources(properties['sources'])
 			quake.set_types(properties['types'])
-			quake.set_location(properties['place'],feature['geometry']['coordinates'])
+			#quake.set_location(properties['place'],feature['geometry']['coordinates'])
 		end
 	end
 
