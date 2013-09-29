@@ -44,7 +44,8 @@ class Earthquake < ActiveRecord::Base
 	# end
 	
 	def set_place(string)
-		self.update_attribute(:place_id,Place.find_or_create_by(name: parse_place(string)))
+		place = Place.find_or_create_by(name: parse_place(string, is_us: is_us?(string)))
+		self.update_attribute(:place_id,place.id)
 	end
 
 	def is_us?(state)
