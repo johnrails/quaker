@@ -38,14 +38,20 @@ class Earthquake < ActiveRecord::Base
 		self.save!
 	end
 
-	def set_coordinate(place,coordinates)
-		raise ArgumentError, "invalid coordinates format. should be an array [longitude,latitude,depth]" unless coordinates.is_a?(Array) && coordinates.size == 3
-		self.create_location(longitude: coordinates[0],latitude: coordinates[1],depth: coordinates.last, place: parse_place(place))
+	# def set_coordinate(place,coordinates)
+	# 	raise ArgumentError, "invalid coordinates format. should be an array [longitude,latitude,depth]" unless coordinates.is_a?(Array) && coordinates.size == 3
+	# 	self.create_location(longitude: coordinates[0],latitude:coordinates[1], depth:coordinates.last, place: parse_place(place), is_us: is_us?(parse_place(place)))
+	# end
+	
+	def set_place(string)
+		self.update_attribute(:place_id,Place.find_or_create_by(name: parse_place(string)))
+	end
+
+	def is_us?(state)
+		!State.where('lower(state_full)= ?', state.downcase).first.nil?
 	end
 
 	def parse_place(place_str)
-		#/of/.match(place).nil? ? place.split("of") : place.split(",")
-		#place = place_str.split('of').map { |s| s.split(',') }.flatten
 		place_str.split(',').last.strip
 	end
 
@@ -76,13 +82,12 @@ class Earthquake < ActiveRecord::Base
 				quake_type: properties['type'],
 				latitude: feature['geometry']['coordinates'][1],
 				longitude: feature['geometry']['coordinates'][0],
-				depth: latitude: feature['geometry']['coordinates'][2]
+				depth: feature['geometry']['coordinates'][2]
 				)
 			quake.set_sources(properties['sources'])
 			quake.set_types(properties['types'])
-			#quake.set_location(properties['place'],feature['geometry']['coordinates'])
+			quake.set_place(properties['place'])
 		end
 	end
-
 
 end

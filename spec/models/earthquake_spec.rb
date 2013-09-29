@@ -2,27 +2,6 @@ require 'spec_helper'
 
 describe Earthquake do
   let(:quake) { Earthquake.new  }
-  # context "#set_coordinate" do
-  #   it "should raise an error" do
-  #     q = Earthquake.new
-  #     c = [-12.3,172]
-  #     expect {q.set_coordinate(c)}.to raise_error
-  #   end
-
-  #   it 'should set_coordinate' do
-  #     q = Earthquake.new
-  #     c = [-12.3,172, 32]
-  #     q.set_coordinate(c)
-  #     expect(q.coordinate.depth).to eq(32)
-  #   end
-  # end
-
-  # context '#set_location' do
-  #   let(:location){"143km south of San Jose,California", [-12.92,172.01, 23,4]}
-  #   it 'should raise an error' do
-
-  #   end
-  # end
 
   context "#parse_location" do
     it 'should return a hash of location attributes' do
@@ -66,6 +45,23 @@ describe Earthquake do
     it "should be empty" do
       quake.set_types empty_types
       expect(quake.product_types.empty?).to be_true
+    end
+  end
+
+  context "#is_us?" do
+    let(:not_state) {'Rome'}
+    let!(:state){State.create(state_full: 'California', state_abbrev: "Ca", state_long: "State of California", country_abbrev: "US",  country_name: "United States")}
+
+    it 'should be true' do
+      expect(quake.is_us?(state.state_full)).to eq(true)
+    end
+
+    it 'should ignore case' do
+      expect(quake.is_us?(state.state_full.downcase)).to eq(true)
+    end
+
+    it 'should be false' do
+      expect(quake.is_us?(not_state)).to eq(false)
     end
   end
 end
