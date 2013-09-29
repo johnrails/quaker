@@ -7,8 +7,14 @@ class Earthquake < ActiveRecord::Base
 	has_many :earthquake_reports
 	has_many :sources, :through  =>  :earthquake_reports
 	has_many :report_products
-	has_one :coordinate
 	has_many :product_types, :through  =>  :report_products
+	belongs_to :place
+
+	#=======
+	# Scopes
+	#=======
+	scope :last_fifteen , -> {where(time: 15.days.ago.beginning_of_day..Date.today).order('magnitude DESC')}
+
 	#===============
 	# class methods
 	#==============
@@ -42,14 +48,12 @@ class Earthquake < ActiveRecord::Base
 	# 	raise ArgumentError, "invalid coordinates format. should be an array [longitude,latitude,depth]" unless coordinates.is_a?(Array) && coordinates.size == 3
 	# 	self.create_location(longitude: coordinates[0],latitude:coordinates[1], depth:coordinates.last, place: parse_place(place), is_us: is_us?(parse_place(place)))
 	# end
-	
-	def set_place(string)
-		place = Place.find_or_create_by(name: parse_place(string, is_us: is_us?(string)))
-		self.update_attribute(:place_id,place.id)
-	end
 
-	def is_us?(state)
-		!State.where('lower(state_full)= ?', state.downcase).first.nil?
+	def set_place(string)
+		place = Place.find_or_create_by(name: parse_place(string))
+		Place.is_us?(string)
+		place.update_attribute(:is_us,Place.is_us?(string))
+		self.update_attribute(:place_id,place.id)
 	end
 
 	def parse_place(place_str)

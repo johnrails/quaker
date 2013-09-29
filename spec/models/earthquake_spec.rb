@@ -64,4 +64,12 @@ describe Earthquake do
       expect(quake.is_us?(not_state)).to eq(false)
     end
   end
+
+  context '#set_places' do
+    let(:place){Place.create(name:"California",is_us: true)}
+    it "should set the place" do
+      quake.set_place(place.name)
+        expect(quake.place_id).to eq(place.id)
+    end
+  end
 end
