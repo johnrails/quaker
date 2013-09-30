@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130929003817) do
+ActiveRecord::Schema.define(version: 20130930043846) do
 
   create_table "earthquake_reports", force: true do |t|
     t.integer  "source_id"
@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20130929003817) do
   end
 
   create_table "earthquakes", force: true do |t|
-    t.decimal  "magnitude",  precision: 10, scale: 2
+    t.decimal  "magnitude",  precision: 3,  scale: 2
     t.string   "place"
     t.datetime "time"
     t.string   "url"

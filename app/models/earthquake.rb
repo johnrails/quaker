@@ -19,9 +19,9 @@ class Earthquake < ActiveRecord::Base
 	# class methods
 	#==============
 
-	def self.most_dangerous(count,days,region,us)
-		Earthquake.find_by_sql('Select places.name, AVE(earthquakes.magnitude) from Places INNER JOIN earthquakes on places.id = earthquakes.place_id GROUP BY places.name ORDER BY AVE(earthquakes.magnitude)')
-		Earthquake.avearage('magnitude').joins('INNER JOIN places on earthquakes.place_id=places.id where places.is_us=1')
+	def self.most_dangerous(count,days,region=false,us=false)
+		us = (us == 'true')
+		Earthquake.find_by_sql(['Select places.name, AVG(earthquakes.magnitude) as magnitude from Places INNER JOIN earthquakes on places.id = earthquakes.place_id WHERE places.is_us=:in_us AND earthquakes.time BETWEEN :start_date AND :end_date GROUP BY places.name ORDER BY magnitude DESC', {in_us: us, start_date: count.to_i.days.ago, end_date: Date.today}])
 	end
 
 	# def close_by(coordinates)
