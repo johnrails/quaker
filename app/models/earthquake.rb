@@ -19,8 +19,9 @@ class Earthquake < ActiveRecord::Base
 	# class methods
 	#==============
 
-	def self.most_dangerous(count,days,region)
-
+	def self.most_dangerous(count,days,region,us)
+		Earthquake.find_by_sql('Select places.name, AVE(earthquakes.magnitude) from Places INNER JOIN earthquakes on places.id = earthquakes.place_id GROUP BY places.name ORDER BY AVE(earthquakes.magnitude)')
+		Earthquake.avearage('magnitude').joins('INNER JOIN places on earthquakes.place_id=places.id where places.is_us=1')
 	end
 
 	# def close_by(coordinates)
@@ -51,13 +52,19 @@ class Earthquake < ActiveRecord::Base
 
 	def set_place(string)
 		place = Place.find_or_create_by(name: parse_place(string))
+		puts Place.is_us?(string)
+		puts "THE PLACE STRING IS #{string}"
 		Place.is_us?(string)
-		place.update_attribute(:is_us,Place.is_us?(string))
+		place.update_attribute(:is_us,Place.is_us?(parse_place(string)))
 		self.update_attribute(:place_id,place.id)
 	end
 
 	def parse_place(place_str)
-		place_str.split(',').last.strip
+		if place_str.include?(',')
+			place_str.split(',').last.strip
+		else
+			place_str
+		end
 	end
 
 
@@ -92,8 +99,8 @@ class Earthquake < ActiveRecord::Base
 				longitude: feature['geometry']['coordinates'][0],
 				depth: feature['geometry']['coordinates'][2]
 				)
-			quake.set_sources(properties['sources'])
-			quake.set_types(properties['types'])
+			#quake.set_sources(properties['sources'])
+			#quake.set_types(properties['types'])
 			quake.set_place(properties['place'])
 		end
 	end
