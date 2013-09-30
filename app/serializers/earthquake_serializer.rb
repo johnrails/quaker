@@ -1,3 +1,3 @@
 class EarthquakeSerializer < ActiveModel::Serializer
-  attributes :magnitude,:place
+  attributes :magnitude
 end

@@ -1,25 +1,18 @@
 require 'spec_helper'
 
 describe Earthquake do
-  context "#set_coordinate" do
-    it "should raise an error" do
-      q = Earthquake.new
-      c = [-12.3,172]
-      expect {q.set_coordinate(c)}.to raise_error
-    end
+  let(:quake) { Earthquake.new  }
 
-    it 'should set_coordinate' do
-      q = Earthquake.new
-      c = [-12.3,172, 32]
-      q.set_coordinate(c)
-      expect(q.coordinate.depth).to eq(32)
+  context "#parse_location" do
+    it 'should return a hash of location attributes' do
+      place = "79km NNW of Road Town, British Virgin Islands"
+      expect(quake.parse_place(place)).to eq("British Virgin Islands")
     end
   end
 
   context '#set_sources' do
     let(:sources) {',ci,mt,bv'}
     let(:empty_sources) {','}
-    let(:quake) { Earthquake.new  }
     it 'should not be empty' do
       quake.set_sources sources
       expect(quake.sources.empty?).to be_false
@@ -39,7 +32,6 @@ describe Earthquake do
   context '#set_types' do
     let(:types) {',quake-watch,sonic-boom,bourn-identity'}
     let(:empty_types) {','}
-    let(:quake) { Earthquake.new  }
     it 'should not be empty' do
       quake.set_types types
       expect(quake.product_types.empty?).to be_false
@@ -53,6 +45,31 @@ describe Earthquake do
     it "should be empty" do
       quake.set_types empty_types
       expect(quake.product_types.empty?).to be_true
+    end
+  end
+
+  context "#is_us?" do
+    let(:not_state) {'Rome'}
+    let!(:state){State.create(state_full: 'California', state_abbrev: "Ca", state_long: "State of California", country_abbrev: "US",  country_name: "United States")}
+
+    it 'should be true' do
+      expect(quake.is_us?(state.state_full)).to eq(true)
+    end
+
+    it 'should ignore case' do
+      expect(quake.is_us?(state.state_full.downcase)).to eq(true)
+    end
+
+    it 'should be false' do
+      expect(quake.is_us?(not_state)).to eq(false)
+    end
+  end
+
+  context '#set_places' do
+    let(:place){Place.create(name:"California",is_us: true)}
+    it "should set the place" do
+      quake.set_place(place.name)
+        expect(quake.place_id).to eq(place.id)
     end
   end
 end

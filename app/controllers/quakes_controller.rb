@@ -4,7 +4,8 @@ class QuakesController < ApplicationController
     count = params[:count] || 10
     days = params[:days] || 10
     region = params[:region] || false
-    @quakes = Earthquake.most_dangerous(count,days,region)
-    render json: @quakes
+    us = params[:us] ||= false
+    @quakes = Earthquake.most_dangerous(count,days,region,us)
+    render json: @quakes.to_json
   end
 end

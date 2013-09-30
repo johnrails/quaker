@@ -7,19 +7,26 @@ class Earthquake < ActiveRecord::Base
 	has_many :earthquake_reports
 	has_many :sources, :through  =>  :earthquake_reports
 	has_many :report_products
-	has_one :coordinate
 	has_many :product_types, :through  =>  :report_products
+	belongs_to :place
+
+	#=======
+	# Scopes
+	#=======
+	scope :last_fifteen , -> {where(time: 15.days.ago.beginning_of_day..Date.today).order('magnitude DESC')}
+
 	#===============
 	# class methods
 	#==============
 
-	def self.most_dangerous(count,days,region)
-
+	def self.most_dangerous(count,days,region=false,us=false)
+		us = (us == 'true')
+		Earthquake.find_by_sql(['Select places.name, AVG(earthquakes.magnitude) as magnitude from Places INNER JOIN earthquakes on places.id = earthquakes.place_id WHERE places.is_us=:in_us AND earthquakes.time BETWEEN :start_date AND :end_date GROUP BY places.name ORDER BY magnitude DESC', {in_us: us, start_date: count.to_i.days.ago, end_date: Date.today}])
 	end
 
-	def close_by(coordinates)
-		SELECT id, ( 3959 * acos( cos( radians(18.21) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(-68.88) ) + sin( radians(18.21) ) * sin( radians( latitude ) ) ) ) AS distance FROM coordinates HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;
-	end
+	# def close_by(coordinates)
+	# 	SELECT id, ( 3959 * acos( cos( radians(18.21) ) * cos( radians( latitude ) ) * cos( radians( longitude ) - radians(-68.88) ) + sin( radians(18.21) ) * sin( radians( latitude ) ) ) ) AS distance FROM coordinates HAVING distance < 25 ORDER BY distance LIMIT 0 , 20;
+	# end
 	def set_sources(sources)
 		return  if sources.split(',').empty?
 		quake_sources = sources.split(',')
@@ -38,12 +45,31 @@ class Earthquake < ActiveRecord::Base
 		self.save!
 	end
 
-	def set_coordinate(coordinates)
-		raise ArgumentError, "invalid coordinates format. should be an array [longitude,latitude,depth]" unless coordinates.is_a?(Array) && coordinates.size == 3
-		self.create_coordinate(longitude: coordinates[0],latitude: coordinates[1],depth: coordinates.last)
+	# def set_coordinate(place,coordinates)
+	# 	raise ArgumentError, "invalid coordinates format. should be an array [longitude,latitude,depth]" unless coordinates.is_a?(Array) && coordinates.size == 3
+	# 	self.create_location(longitude: coordinates[0],latitude:coordinates[1], depth:coordinates.last, place: parse_place(place), is_us: is_us?(parse_place(place)))
+	# end
+
+	def set_place(string)
+		place = Place.find_or_create_by(name: parse_place(string))
+		Place.is_us?(string)
+		place.update_attribute(:is_us,Place.is_us?(parse_place(string)))
+		self.update_attribute(:place_id,place.id)
 	end
 
+	def parse_place(place_str)
+		if place_str.include?(',')
+			place_str.split(',').last.strip
+		else
+			place_str
+		end
+	end
+
+
 	protected
+
+
+	# initial seeding of earthquake data
 	def self.seed_data
 		uri = URI.parse(SEED_URL)
 		quakes = JSON.parse(Net::HTTP.get(uri))
@@ -51,7 +77,6 @@ class Earthquake < ActiveRecord::Base
 			properties = feature['properties']
 			quake = Earthquake.create(
 				magnitude: properties['mag'],
-				place: properties['place'],
 				time: Time.at((properties['time']/1000)),
 				url: properties['url'],
 				detail_url: properties['detail'],
@@ -67,13 +92,15 @@ class Earthquake < ActiveRecord::Base
 				dmin: properties['dmin'],
 				gap: properties['gap'],
 				mag_type: properties['magType'],
-				quake_type: properties['type']
+				quake_type: properties['type'],
+				latitude: feature['geometry']['coordinates'][1],
+				longitude: feature['geometry']['coordinates'][0],
+				depth: feature['geometry']['coordinates'][2]
 				)
 			quake.set_sources(properties['sources'])
 			quake.set_types(properties['types'])
-			quake.set_coordinate(feature['geometry']['coordinates'])
+			quake.set_place(properties['place'])
 		end
 	end
-
 
 end
