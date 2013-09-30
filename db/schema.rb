@@ -21,7 +21,7 @@ ActiveRecord::Schema.define(version: 20130929003817) do
   end
 
   create_table "earthquakes", force: true do |t|
-    t.decimal  "magnitude",  precision: 10, scale: 0
+    t.decimal  "magnitude",  precision: 10, scale: 2
     t.string   "place"
     t.datetime "time"
     t.string   "url"

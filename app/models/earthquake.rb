@@ -62,6 +62,9 @@ class Earthquake < ActiveRecord::Base
 
 
 	protected
+
+
+	# initial seeding of earthquake data
 	def self.seed_data
 		uri = URI.parse(SEED_URL)
 		quakes = JSON.parse(Net::HTTP.get(uri))
