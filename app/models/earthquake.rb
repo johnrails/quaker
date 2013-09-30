@@ -52,8 +52,6 @@ class Earthquake < ActiveRecord::Base
 
 	def set_place(string)
 		place = Place.find_or_create_by(name: parse_place(string))
-		puts Place.is_us?(string)
-		puts "THE PLACE STRING IS #{string}"
 		Place.is_us?(string)
 		place.update_attribute(:is_us,Place.is_us?(parse_place(string)))
 		self.update_attribute(:place_id,place.id)
@@ -99,8 +97,8 @@ class Earthquake < ActiveRecord::Base
 				longitude: feature['geometry']['coordinates'][0],
 				depth: feature['geometry']['coordinates'][2]
 				)
-			#quake.set_sources(properties['sources'])
-			#quake.set_types(properties['types'])
+			quake.set_sources(properties['sources'])
+			quake.set_types(properties['types'])
 			quake.set_place(properties['place'])
 		end
 	end

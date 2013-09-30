@@ -1,28 +1,17 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is the Quaker application
 
-Things you may want to cover:
+It has been built with Rails 4.0, and Ruby 2.0
+To get started:
+* run migrations
 
-* Ruby version
+* run rake seed:seed_data
+  This will load states data and seed earthquake data
+  it assumes mysql default installation credentials for root user
+  seeded data is added to development database. edit seed.rake to seed a production database
 
-* System dependencies
+* End point for quake data is /quakes/quake
 
-* Configuration
+* query parameters available - count<int>,days<int>,region<boolean>,us<boolean>
 
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
