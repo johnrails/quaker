@@ -69,7 +69,7 @@ class Earthquake < ActiveRecord::Base
 	protected
 
 
-	# initial seeding of earthquake data
+	# initial seeding of earthquake data there's probably lots of unnecesary attributes here.
 	def self.seed_data
 		uri = URI.parse(SEED_URL)
 		quakes = JSON.parse(Net::HTTP.get(uri))
